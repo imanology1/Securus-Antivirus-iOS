@@ -1,0 +1,70 @@
+# === OS ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+
+# === IDEs ===
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# === Swift / Xcode ===
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+Packages/
+.build/
+.swiftpm/
+
+# === Node.js ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+coverage/
+.nyc_output/
+
+# === Environment ===
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# === Docker ===
+docker-compose.override.yml
+
+# === Build artifacts ===
+*.js.map
+*.tsbuildinfo
+
+# === Testing ===
+coverage/
+.jest/
+test-results/
+
+# === Misc ===
+*.log
+*.pid
+*.seed
+*.pid.lock
