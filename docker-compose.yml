@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+  # ──────────────────────────────────────────────
+  # PostgreSQL + TimescaleDB
+  # ──────────────────────────────────────────────
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    container_name: securus-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: securus
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-securus_dev_password}
+      POSTGRES_DB: securus
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/database/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U securus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────────────
+  # Redis (rate limiting, caching)
+  # ──────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: securus-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────────────
+  # Backend API
+  # ──────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: securus-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://securus:${DB_PASSWORD:-securus_dev_password}@postgres:5432/securus
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      JWT_EXPIRY: 24h
+      CORS_ORIGIN: http://localhost:5173
+      API_RATE_LIMIT: 100
+    ports:
+      - "3001:3001"
+
+  # ──────────────────────────────────────────────
+  # Dashboard (Vite dev server)
+  # ──────────────────────────────────────────────
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: securus-dashboard
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://localhost:3001
+    ports:
+      - "5173:5173"
+
+volumes:
+  postgres_data:
