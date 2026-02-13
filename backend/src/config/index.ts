@@ -31,7 +31,7 @@ const config: Config = {
   ),
   jwtSecret: requireEnv('JWT_SECRET', 'dev-secret-change-in-production'),
   jwtExpiry: requireEnv('JWT_EXPIRY', '24h'),
-  corsOrigin: requireEnv('CORS_ORIGIN', 'http://localhost:3000'),
+  corsOrigin: requireEnv('CORS_ORIGIN', 'http://localhost:5173'),
   redisUrl: requireEnv('REDIS_URL', 'redis://localhost:6379'),
   apiRateLimit: parseInt(requireEnv('API_RATE_LIMIT', '100'), 10),
 };
