@@ -163,7 +163,7 @@ extension SecurusViewModel: SecurusAgentDelegate {
 
     func securusAgent(_ agent: SecurusAgent, didEncounterError error: SecurusError) {
         DispatchQueue.main.async {
-            self.errors.append(error.localizedDescription ?? "Unknown error")
+            self.errors.append(error.errorDescription ?? "Unknown error")
         }
     }
 }
